@@ -4,19 +4,21 @@ from scipy.stats import pearsonr
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+import Linear_Regression as M1
+import Polynomial_Regression as M2
+
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import KFold
 import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 import math
-
-
 class PrepProcessing:
     dicOfLanguages = list()
     datasetcredits = np.nan
     data = []
     help = list()
-
     def __init__(self):
         self.datasetmovies = pd.read_csv('tmdb_5000_movies_train.csv')
         self.datasetcredits = pd.read_csv('tmdb_5000_credits_train.csv')
@@ -24,7 +26,7 @@ class PrepProcessing:
     def basic_step_of_preprocessing(self, str, datasetName):
         arr = []
         if datasetName == "datasetmovies":
-            for x in self.datasetmovies[str]:
+             for x in self.datasetmovies[str]:
                 arr.append(x)
         else:
             for x in self.datasetcredits[str]:
@@ -35,28 +37,30 @@ class PrepProcessing:
     def transform_map(self, arr):
         aset = set()
         dic = dict()
-        for i in range(len(arr)):
+        for i in range (len(arr)):
             aset.add(arr[i])
-        counter = 1
+        counter =1
         for setElement in aset:
-            dic[setElement] = counter
-            counter += 1
+            dic[setElement]=counter
+            counter+=1
         return dic
+
 
     def mapping(self, dic, arr):
         for i in range(len(arr)):
             arr[i] = dic[arr[i]]
         return arr
 
-    def getIDFromJSON(self, arr, key, int_str):
+
+    def getIDFromJSON(self, arr,key,int_str):
         for i in range(len(arr)):
             str1 = arr[i].replace(']', '').replace('[', '')
             l = str1.replace('"', '').replace(',', '').replace('{', '').replace('}', '').replace(':', '')
             l = l.split(' ')
-            # print(l)
+            #print(l)
             listOfOneElement = []
             for j in range(len(l)):
-                if l[j] == key:
+                if l[j] == key :
                     try:
                         if int_str == True:
                             listOfOneElement.append(int(l[j + 1]))
@@ -78,6 +82,7 @@ class PrepProcessing:
                     spokenLanguages[i][j] = self.dicOfLanguages[spokenLanguages[i][j]]
         return spokenLanguages
 
+
     def reformat(self):
         self.datasetmovies = self.datasetmovies[0:3799]
         self.datasetcredits = self.datasetcredits[0:3799]
@@ -85,13 +90,13 @@ class PrepProcessing:
         self.data.append(self.basic_step_of_preprocessing('id', "datasetmovies"))
 
         self.help.append("budget")
-        self.data.append(self.basic_step_of_preprocessing('budget', "datasetmovies"))
+        self.data.append(self.basic_step_of_preprocessing('budget',"datasetmovies"))
 
         self.help.append("revenue")
         self.data.append(self.basic_step_of_preprocessing('revenue', "datasetmovies"))
 
         self.help.append("original_language")
-        org_lang = self.basic_step_of_preprocessing('original_language', "datasetmovies")
+        org_lang = self.basic_step_of_preprocessing('original_language',"datasetmovies")
         self.dicOfLanguages = self.transform_map(org_lang)
         org_lang = self.mapping(self.dicOfLanguages, org_lang)
         self.data.append(org_lang)
@@ -112,13 +117,13 @@ class PrepProcessing:
 
         self.help.append("genres")
         genres = self.datasetmovies['genres']
-        genres = self.getIDFromJSON(genres[:], 'id', True)
+        genres =self.getIDFromJSON(genres[:], 'id', True)
         self.data.append(genres)
 
         self.help.append("keywords")
         keywords = self.datasetmovies['keywords']
         keywords = keywords[:3799]
-        keywords = self.getIDFromJSON(keywords, 'id', True)
+        keywords = self.getIDFromJSON(keywords,'id',True)
         self.data.append(keywords)
 
         # Production Countries Pre-Processing
@@ -126,7 +131,7 @@ class PrepProcessing:
         productionCountries = self.datasetmovies['production_countries']
         productionCountries = productionCountries[:3799]
         productionCountries = self.getIDFromJSON(productionCountries, 'id', True)
-        # print(productionCountries)
+        #print(productionCountries)
         dicOfPrductioCountries = self.handlingCatigorialVariables(productionCountries, voteAvrg, voteCount, 1)
         productionCountries = self.putDictToList(dicOfPrductioCountries, productionCountries)
         self.data.append(productionCountries)
@@ -149,8 +154,8 @@ class PrepProcessing:
         cast = self.datasetcredits['cast']
         cast = cast[:3799]
         cast = self.getIDFromJSON(cast, 'id', True)
-        dicOfCast = self.handlingCatigorialVariables(cast, voteAvrg, voteCount, 1)
-        cast = self.putDictToList(dicOfCast, cast)
+        dicOfCast = self.handlingCatigorialVariables(cast,voteAvrg,voteCount,1)
+        cast = self.putDictToList (dicOfCast,cast)
 
         self.data.append(cast)
 
@@ -182,7 +187,6 @@ class PrepProcessing:
                         break
         return ans
     '''
-
     def extractYearFromDate(self, date):
         ans = []
         for i in range(len(date)):
@@ -199,12 +203,15 @@ class PrepProcessing:
                         ans.append(int(d))
         return ans
 
-    def printNumOfMissing(self, columnNum):
+
+    def printNumOfMissing(self,columnNum):
         c = 0
         for i in range(len(self.data[columnNum])):
             if self.data[columnNum][i]:
                 c += 1
-        print(self.help[columnNum], 3799 - c)
+        print(self.help[columnNum], 3799-c)
+
+
 
         '''
                  plt.figure(figsize=(15, 8))
@@ -212,7 +219,8 @@ class PrepProcessing:
                  plt.show()
         '''
 
-    def GetData(self):
+
+    def test(self):
         model = linear_model.LinearRegression()
         toBeTrained = []
         toBeTrained.append(self.data[1])
@@ -224,25 +232,40 @@ class PrepProcessing:
         toBeTrained.append(self.data[12])
         toBeTrained = np.array(toBeTrained)
         toBeLabel = np.array(self.data[5])
-        # toBeLabel = np.expand_dims(toBeLabel, axis=1)
-        X_train, X_test, y_train, y_test = train_test_split(toBeTrained.T, toBeLabel, test_size=0.30)
-        # X_train = np.expand_dims(X_train, axis=1)
+        #toBeLabel = np.expand_dims(toBeLabel, axis=1)
+        X_train, X_test, y_train, y_test = train_test_split(toBeTrained.T, toBeLabel, test_size=0.30, shuffle=False)
+        #X_train = np.expand_dims(X_train, axis=1)
         y_train = np.expand_dims(y_train, axis=1)
-        # X_test = np.expand_dims(X_test, axis=1)
+        #X_test = np.expand_dims(X_test, axis=1)
         y_test = np.expand_dims(y_test, axis=1)
-        # print(np.array(X_train).shape)
-        # print(np.array(y_train).shape)
+        #print(np.array(X_train).shape)
+        #print(np.array(y_train).shape)
         model.fit(X_train, y_train)
         prediction = model.predict(X_test)
 
-        # plt.scatter(X_test, y_test)
-        # plt.xlabel('budged', fontsize=20)
-        # plt.ylabel('vote', fontsize=20)
-        # plt.plot(X_test, prediction, color='red', linewidth=3)
+        #plt.scatter(X_test, y_test)
+        #plt.xlabel('budged', fontsize=20)
+        #plt.ylabel('vote', fontsize=20)
+        #plt.plot(X_test, prediction, color='red', linewidth=3)
         print('Mean Square Error', metrics.mean_squared_error(y_test, prediction))
-        # plt.show()
-        return toBeTrained , X_train,y_train,X_test
-    def meanscale(self, colNum):
+        model1=M1.Linear_Regression(toBeTrained,toBeLabel)
+        model1.FitModel()
+        model1.TrainModel()
+
+        model2 = M2.Polynomial_Regression(toBeTrained,toBeLabel)
+        model2.FitModel()
+        model2.TrainModel()
+        #plt.show()
+        #model1 = linear_model.LinearRegression()
+        #toBeLabel = np.expand_dims(toBeLabel, axis=1)
+        #model1.fit(toBeTrained.T,toBeLabel)
+        #crossvalidation = KFold(n_splits=200, random_state=None, shuffle=False)
+        #scores = cross_val_score(model1, toBeTrained.T, toBeLabel, scoring="neg_mean_squared_error", cv=crossvalidation)
+        #print("Folds: " + str(len(scores)) + ", MSE: " + str(np.mean(np.abs(scores))) + ", STD: " + str(np.std(scores)))
+
+
+
+    def meanscale(self,colNum):
 
         mx = max(self.data[colNum])
         mn = min(self.data[colNum])
@@ -251,7 +274,9 @@ class PrepProcessing:
         if denemurator == 0:
             denemurator = 1
 
+
         self.data[colNum] = (self.data[colNum] - meu) / (mx - mn)
+
 
     def fillMissingData(self, columnNum):
         # Get Median
@@ -261,73 +286,74 @@ class PrepProcessing:
                 dataCol.append(self.data[columnNum][i])
         dataCol = np.sort(dataCol)
         medain = 0
-        if len(dataCol) % 2 == 1:
-            medain = dataCol[int((len(dataCol) - 1) / 2)]
+        if len(dataCol)%2 == 1:
+            medain = dataCol[int((len(dataCol) - 1)/2)]
         else:
-            medain = dataCol[int(len(dataCol) / 2)] + dataCol[int((len(dataCol)) / 2 - 1)]
+            medain = dataCol[int(len(dataCol)/2)] + dataCol[int((len(dataCol))/2 -1)]
             medain /= 2
         # fill missing data with median value
         for i in range(len(self.data[columnNum])):
             if not self.data[columnNum][i] or np.isnan(self.data[columnNum][i]):
                 self.data[columnNum][i] = medain
 
+
     # calculate correlation between two column { delete row if data missied in any of them}
     def cul_correlation(self, data1, data2):
         ans1 = []
         ans2 = []
         for i in range(len(data1)):
-            if data1[i] and data2[i] and (not (math.isnan(data1[i]))) and (not (math.isnan(data2[i]))):
+            if data1[i] and data2[i] and (not(math.isnan(data1[i])) )and (not (math.isnan(data2[i]))) :
                 ans1.append(data1[i])
                 ans2.append(data2[i])
-        corr, _ = pearsonr(ans1, ans2)
+        corr, _ = pearsonr(ans1,ans2)
         print('Pearsons correlation: %.3f' % corr)
 
-    def handlingCatigorialVariables(self, arr, vote, votecount, option):
+    def handlingCatigorialVariables(self,arr,vote,votecount,option):
         d = dict()
         dcount = dict()
-        # option =2
+        #option =2
         if option == 1:
             for i in range(len(arr)):
                 for j in range(len(arr[i])):
                     if arr[i][j] in d:
-                        d[arr[i][j]] += vote[i] * votecount[i]
-                        dcount[arr[i][j]] += 1
-                    else:
-                        # d.asset(cast[i][j])
+                        d[arr[i][j]]+=vote[i]*votecount[i]
+                        dcount[arr[i][j]]+=1
+                    else :
+                        #d.asset(cast[i][j])
                         d[arr[i][j]] = 0
-                        d[arr[i][j]] += vote[i] * votecount[i]
-                        # dcount.add(cast[i][j])
+                        d[arr[i][j]] += vote[i]*votecount[i]
+                        #dcount.add(cast[i][j])
                         dcount[arr[i][j]] = 1
         elif option == 2:
             for i in range(len(arr)):
                 for j in range(len(arr[i])):
                     if arr[i][j] in d:
-                        d[arr[i][j]] += vote[i]
-                        dcount[arr[i][j]] += 1
+                        d[arr[i][j]]+=vote[i]
+                        dcount[arr[i][j]]+=1
                     else:
-                        # d.add(cast[i][j])
+                        #d.add(cast[i][j])
                         d[arr[i][j]] = 0
                         d[arr[i][j]] += vote[i]
-                        # dcount.add(cast[i][j])
+                        #dcount.add(cast[i][j])
                         dcount[arr[i][j]] = 1
 
-        for key, ele in d.items():
+        for key,ele in d.items():
             count = dcount[key]
             d[key] = ele / count
         return d
 
-    def putDictToList(self, dic, arr):
+    def putDictToList (self,dic,arr):
         l = []
         for i in range(len(arr)):
-            x = 0
+            x=0
             for j in range(len(arr[i])):
                 x += dic[arr[i][j]]
             l.append(x)
         return l
 
     def deleteMissingData(self):
-        ans = [[], [], [], [], [], [], [], []]
-        listOfItems = [1, 2, 4, 6, 7, 14, 5, 12]
+        ans = [[], [], [], [], [], [], [],[]]
+        listOfItems = [1, 2, 4, 6, 7, 14, 5,12]
         for i in range(len(self.data[0])):
             deleteRow = 0
             for j in range(len(listOfItems)):
@@ -340,6 +366,7 @@ class PrepProcessing:
                     ans[j].append(self.data[listOfItems[j]][i])
         for i in range(len(listOfItems)):
             self.data[listOfItems[i]] = ans[i]
+
 
 
 x = PrepProcessing()
@@ -361,7 +388,7 @@ x.meanscale(14)
 x.meanscale(12)
 x.meanscale(6)
 
-x.GetData()
+x.test()
 
 # correlation between vote average and month in relase date = 0.001
 # correlation between vote average and years in relase date = -0.135
