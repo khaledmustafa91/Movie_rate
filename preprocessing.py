@@ -11,7 +11,11 @@ import json
 import math
 import sklearn.svm as ml
 import Linear_Regression as LR
-
+import SVR as sv
+import Knn_Regression as Knn
+import Lasso_Regression as LaR
+import Polynomial_Regression as PR
+import Ridge_Regression as RR
 class PrepProcessing:
     dicOfLanguages = list()
     datasetcredits = np.nan
@@ -215,7 +219,7 @@ class PrepProcessing:
 
     def GetData(self):
         #model = linear_model.LinearRegression()
-        svr = ml.SVR(kernel='linear', C=1.0, epsilon=0.1)
+        #svr = ml.SVR(kernel='linear', C=1.0, epsilon=0.1)
         toBeTrained = []
         toBeTrained.append(self.data[1])
         toBeTrained.append(self.data[7])
@@ -234,17 +238,17 @@ class PrepProcessing:
         y_test = np.expand_dims(y_test, axis=1)
         # print(np.array(X_train).shape)
         # print(np.array(y_train).shape)
-        svr.fit(X_train, y_train)
+        #svr.fit(X_train, y_train)
         #model.fit(X_train, y_train)
-        prediction = svr.predict(X_test)
+        #prediction = svr.predict(X_test)
 
         # plt.scatter(X_test, y_test)
         # plt.xlabel('budged', fontsize=20)
         # plt.ylabel('vote', fontsize=20)
         # plt.plot(X_test, prediction, color='red', linewidth=3)
-        print('Mean Square Error', metrics.mean_squared_error(y_test, prediction))
+        #print('Mean Square Error', metrics.mean_squared_error(y_test, prediction))
         # plt.show()
-        return toBeTrained,toBeLabel , X_train , X_test , y_train, y_test
+        return toBeTrained,toBeLabel# , X_train , X_test , y_train, y_test
     def meanscale(self, colNum):
 
         mx = max(self.data[colNum])
@@ -347,7 +351,7 @@ class PrepProcessing:
 
 x = PrepProcessing()
 x.reformat()
-print(x.help)
+#print(x.help)
 
 '''x.fillMissingData(1)
 x.fillMissingData(2)
@@ -364,10 +368,41 @@ x.meanscale(14)
 x.meanscale(12)
 x.meanscale(6)
 
-x.GetData()
 
-model = LR.Linear_Regression()
-#test = SVR()
-print("hello")
+
+'''x.GetData()
+tobeTrained , tobeLabel = x.GetData()
+# Linear_Regression
+LinearModel = LR.Linear_Regression(tobeTrained,tobeLabel)
+LinearModel.FitModel()
+LinearModel.TrainModel()
+
+# svr
+Svr = sv.SVR(tobeTrained,tobeLabel)
+Svr.fitData()
+Svr.train_model()
+
+# KNN model
+KnnModel = Knn.Knn_Regression(tobeTrained,tobeLabel)
+KnnModel.FitModel()
+KnnModel.TrainModel()
+
+# Lasso_Regression
+LassoModel = LaR.Lasso_Regression(tobeTrained,tobeLabel)
+LassoModel.FitModel()
+LassoModel.TrainModel()
+
+# Polynomial_Regression
+PRModel = PR.Polynomial_Regression(tobeTrained,tobeLabel,2)
+PRModel.FitModel()
+PRModel.TrainModel()
+
+# Ridge_Regression
+
+RRModel = RR.Ridge_Regression(tobeTrained,tobeLabel)
+RRModel.FitModel()
+RRModel.TrainModel()
+'''
+
 # correlation between vote average and month in relase date = 0.001
 # correlation between vote average and years in relase date = -0.135

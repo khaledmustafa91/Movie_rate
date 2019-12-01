@@ -24,7 +24,7 @@ class Linear_Regression:
         scores = cross_val_score(self.model, self.XdataTrain.T, self.YdataTrain, scoring="neg_mean_squared_error",
                                  cv=crossvalidation)
         print("Linear Regression Model " + "\nMSE: " + str(np.mean(np.abs(scores))) + "\nSTD: " + str(
-            np.std(scores)) + "\n__________________________________________________________________")
+                np.std(scores)) + "\n__________________________________________________________________")
         # print("Scores: "+ str(scores))
 
     def TrainAndTestModel(self):
