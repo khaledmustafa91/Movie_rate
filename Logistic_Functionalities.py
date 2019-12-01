@@ -5,14 +5,16 @@ def sigmoid_activation_function(z):
     sigmoid_value = (1 / (1 + np.exp(-z)))
     return sigmoid_value
 
-#-----------------------------------------------
+
+# -----------------------------------------------
 
 
 def net_function(theta, x):
     net_value = np.dot(x, theta)
     return net_value
 
-#-------------------------------------------------
+
+# -------------------------------------------------
 
 
 def train_function(x, y_actual):
@@ -29,7 +31,8 @@ def train_function(x, y_actual):
 
     return theta
 
-#--------------------------------------------------
+
+# --------------------------------------------------
 
 
 def predict_probability(theta, x):
@@ -38,7 +41,8 @@ def predict_probability(theta, x):
     predicted_probability = sig_value
     return predicted_probability
 
-#-----------------------------------------------------
+
+# -----------------------------------------------------
 
 
 def predict_classes(theta, x):

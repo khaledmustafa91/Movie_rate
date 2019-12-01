@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 import math
-
+import sklearn.svm as ml
+import Linear_Regression as LR
 
 class PrepProcessing:
     dicOfLanguages = list()
@@ -213,7 +214,8 @@ class PrepProcessing:
         '''
 
     def GetData(self):
-        model = linear_model.LinearRegression()
+        #model = linear_model.LinearRegression()
+        svr = ml.SVR(kernel='linear', C=1.0, epsilon=0.1)
         toBeTrained = []
         toBeTrained.append(self.data[1])
         toBeTrained.append(self.data[7])
@@ -232,8 +234,9 @@ class PrepProcessing:
         y_test = np.expand_dims(y_test, axis=1)
         # print(np.array(X_train).shape)
         # print(np.array(y_train).shape)
-        model.fit(X_train, y_train)
-        prediction = model.predict(X_test)
+        svr.fit(X_train, y_train)
+        #model.fit(X_train, y_train)
+        prediction = svr.predict(X_test)
 
         # plt.scatter(X_test, y_test)
         # plt.xlabel('budged', fontsize=20)
@@ -241,7 +244,7 @@ class PrepProcessing:
         # plt.plot(X_test, prediction, color='red', linewidth=3)
         print('Mean Square Error', metrics.mean_squared_error(y_test, prediction))
         # plt.show()
-        return toBeTrained , X_train,y_train,X_test
+        return toBeTrained,toBeLabel , X_train , X_test , y_train, y_test
     def meanscale(self, colNum):
 
         mx = max(self.data[colNum])
@@ -363,5 +366,8 @@ x.meanscale(6)
 
 x.GetData()
 
+model = LR.Linear_Regression()
+#test = SVR()
+print("hello")
 # correlation between vote average and month in relase date = 0.001
 # correlation between vote average and years in relase date = -0.135
