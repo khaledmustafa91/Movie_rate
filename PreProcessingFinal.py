@@ -62,6 +62,8 @@ class PrepProcessing:
                             if l[j] == key:
                                 listOfOneElement.append(id)
                                 break
+                            if l[j] == "id":
+                                id = int(l[j+1])
                             j += 1
             else:
                 for j in range(len(l)):
@@ -317,16 +319,17 @@ class PrepProcessing:
         X_train, X_test, y_train, y_test = train_test_split(toBeTrained.T, toBeLabel, test_size=0.30)
         y_train = np.expand_dims(y_train, axis=1)
         y_test = np.expand_dims(y_test, axis=1)
+
         model.fit(X_train, y_train)
         prediction = model.predict(X_test)
-        print('Mean Square Error', metrics.mean_squared_error(y_test, prediction))
+#        print('Mean Square Error', metrics.mean_squared_error(y_test, prediction))
 
- #       plt.figure("Test")
-#        plt.scatter(np.atleast_2d(X_test[:,0]), y_test)
+        plt.figure("Test")
+        plt.scatter(np.atleast_2d(X_test[:,0]), y_test)
 
-        #plt.scatter(np.atleast_2d(X_train[:,0]), y_train)
-        #plt.plot(np.atleast_2d(X_test[:,0]), prediction, color='red', linewidth=3)
-#        plt.show()
+     #   plt.scatter(np.atleast_2d(X_train[:,0]), y_train)
+        plt.plot(np.atleast_2d(X_test[:,0]), prediction, color='red', linewidth=3)
+        plt.show()
 
         return toBeTrained,toBeLabel
 

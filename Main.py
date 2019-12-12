@@ -16,40 +16,82 @@ import Knn_Regression as Knn
 import Lasso_Regression as LaR
 import Polynomial_Regression as PR
 import Ridge_Regression as RR
-#import preprocessing as pre
-#import PreProcessingBsmsm as pre
 import PreProcessingFinal as pre
+#import preprocessingBsmsm as pre
+
 preprocessingVar = pre.PrepProcessing()
 tobeTrained , tobeLabel = preprocessingVar.GetData()
 
-LinearModel = LR.Linear_Regression(tobeTrained,tobeLabel)
-LinearModel.FitModel()
-LinearModel.TrainModel()
+def main():
+    print("If You Want to show our trail Press 1 \nIf You want to Test Press 2 ")
+    ch=input()
+    if ch=='1':
+        LinearModel = LR.Linear_Regression(tobeTrained, tobeLabel)
+        LinearModel.FitModel()
+        LinearModel.TrainModel()
 
+        # svr
+        Svr = sv.SVR(tobeTrained, tobeLabel)
+        Svr.FitModel()
+        Svr.TrainModel()
 
+        # KNN model
+        KnnModel = Knn.Knn_Regression(tobeTrained, tobeLabel, 5)
+        KnnModel.FitModel()
+        KnnModel.TrainModel()
 
-# svr
-Svr = sv.SVR(tobeTrained,tobeLabel)
-Svr.FitModel()
-Svr.TrainModel()
+        # Lasso_Regression
+        LassoModel = LaR.Lasso_Regression(tobeTrained, tobeLabel)
+        LassoModel.FitModel()
+        LassoModel.TrainModel()
 
-# KNN model
-KnnModel = Knn.Knn_Regression(tobeTrained,tobeLabel,10)
-KnnModel.FitModel()
-KnnModel.TrainModel()
+        # Polynomial_Regression
+        PRModel = PR.Polynomial_Regression(tobeTrained, tobeLabel, 3)
+        PRModel.FitModel()
+        PRModel.TrainModel()
 
-# Lasso_Regression
-LassoModel = LaR.Lasso_Regression(tobeTrained,tobeLabel)
-LassoModel.FitModel()
-LassoModel.TrainModel()
+        # Ridge_Regression
 
-# Polynomial_Regression
-PRModel = PR.Polynomial_Regression(tobeTrained,tobeLabel,3)
-PRModel.FitModel()
-PRModel.TrainModel()
+        RRModel = RR.Ridge_Regression(tobeTrained, tobeLabel)
+        RRModel.FitModel()
+        RRModel.TrainModel()
+    else:
+        print("Enter X Data Name : ")
+        xname=input()
+        print("Enter Y Data Name : ")
+        yname=input()
+        XTest=pd.read_csv(xname)
+        YTest = pd.read_csv(yname)
 
-# Ridge_Regression
+        LinearModel = LR.Linear_Regression(tobeTrained, tobeLabel,XTest,YTest)
+        LinearModel.FitModel()
+        LinearModel.TrainAndTestModel()
 
-RRModel = RR.Ridge_Regression(tobeTrained,tobeLabel)
-RRModel.FitModel()
-RRModel.TrainModel()
+        # svr
+        Svr = sv.SVR(tobeTrained, tobeLabel)
+        Svr.FitModel()
+        Svr.TrainAndTestModel()
+
+        # KNN model
+        KnnModel = Knn.Knn_Regression(tobeTrained, tobeLabel, 10,XTest,YTest)
+        KnnModel.FitModel()
+        KnnModel.TrainModel()
+
+        # Lasso_Regression
+        LassoModel = LaR.Lasso_Regression(tobeTrained, tobeLabel,XTest,YTest)
+        LassoModel.FitModel()
+        LassoModel.TrainAndTestModel()
+
+        # Polynomial_Regression
+        PRModel = PR.Polynomial_Regression(tobeTrained, tobeLabel, 3,XTest,YTest)
+        PRModel.FitModel()
+        PRModel.TrainAndTestModel()
+
+        # Ridge_Regression
+
+        RRModel = RR.Ridge_Regression(tobeTrained, tobeLabel,XTest,YTest)
+        RRModel.FitModel()
+        RRModel.TrainAndTestModel()
+
+main()
+
