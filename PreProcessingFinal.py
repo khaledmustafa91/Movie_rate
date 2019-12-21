@@ -14,9 +14,10 @@ class PrepProcessing:
     datasetcredits = np.nan
     data = []
     help = list()
-    def __init__(self):
-        self.datasetmovies = pd.read_csv('tmdb_5000_movies_train.csv')
-        self.datasetcredits = pd.read_csv('tmdb_5000_credits_train.csv')
+    def __init__(self,datasetmovies, datasetcredits):
+        self.datasetmovies = pd.read_csv(datasetmovies)
+        self.datasetcredits = pd.read_csv(datasetcredits)
+
 
     def basic_step_of_preprocessing(self, str, datasetName):
         arr = []
@@ -316,20 +317,6 @@ class PrepProcessing:
 
         toBeTrained = np.array(toBeTrained)
         toBeLabel = np.array(self.data[5])
-        X_train, X_test, y_train, y_test = train_test_split(toBeTrained.T, toBeLabel, test_size=0.30)
-        y_train = np.expand_dims(y_train, axis=1)
-        y_test = np.expand_dims(y_test, axis=1)
-
-        model.fit(X_train, y_train)
-        prediction = model.predict(X_test)
-#        print('Mean Square Error', metrics.mean_squared_error(y_test, prediction))
-
-        plt.figure("Test")
-        plt.scatter(np.atleast_2d(X_test[:,0]), y_test)
-
-     #   plt.scatter(np.atleast_2d(X_train[:,0]), y_train)
-        plt.plot(np.atleast_2d(X_test[:,0]), prediction, color='red', linewidth=3)
-        plt.show()
 
         return toBeTrained,toBeLabel
 
@@ -431,7 +418,8 @@ class PrepProcessing:
         listOfItems = [2, 4,5,  6, 7, 8, 9, 11, 12, 18]
         #ans = [[], [], [], [], [], [], [] , [], [], [], [], [], [], [], [], [], [], [], [], []]
         #listOfItems = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,  14, 15, 16, 17, 18, 19]
-        for i in range(len(self.data[0])):
+        ra = min(len(self.data[2]), len(self.data[4]), len(self.data[5]), len(self.data[6]), len(self.data[7]), len(self.data[8]), len(self.data[9]), len(self.data[11]), len(self.data[12]), len(self.data[18]))
+        for i in range(ra):
             deleteRow = 0
             for j in range(len(listOfItems)):
                 if not self.data[listOfItems[j]][i]:
@@ -443,7 +431,7 @@ class PrepProcessing:
         for i in range(len(listOfItems)):
             self.data[listOfItems[i]] = ans[i]
 
-
+'''
 x = PrepProcessing()
 x.reformat()
 print(x.help)
@@ -471,5 +459,6 @@ x.cul_correlation(x.data[18], x.data[5])
 x.cul_correlation(x.data[19], x.data[5])
 
 x.GetData()
+'''
 # correlation between vote average and month in relase date = 0.001
 # correlation between vote average and years in relase date = -0.135

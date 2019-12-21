@@ -8,25 +8,19 @@ from sklearn import metrics
 
 
 class SVR:
-    svr = ml.SVR(kernel='linear', C=1.0, epsilon=0.1)
+    model = ml.SVR(kernel='linear', C=1.0, epsilon=0.1)
 
-    def __init__(self, toBeTrained, toBeLabel, x_test="", y_test=""):
-        self.x_test = x_test
-        self.y_test = y_test
+    def __init__(self, toBeTrained, toBeLabel):
         self.toBeTrained = toBeTrained
         self.toBeLabel = toBeLabel
 
-    def TrainModel(self):
-        crossvalidation = KFold(n_splits=5, random_state=None, shuffle=True)
-        scores = cross_val_score(self.svr, self.toBeTrained.T, self.toBeLabel, scoring="neg_mean_squared_error",
-                                 cv=crossvalidation)
-        print("Support vector machine Regression Model " + "\nMSE: " + str(np.mean(np.abs(scores))) + "\nSTD: " + str(
-            np.std(scores)) + "\n__________________________________________________________________")
 
     def FitModel(self):
-        self.svr.fit(self.toBeTrained.T, self.toBeLabel)
+        self.model.fit(self.toBeTrained.T, self.toBeLabel)
 
-    def TrainAndTestModel(self):
-        y_predict = self.svr.predict(self.x_test)
-        print("Support vector machine Regression Model " + "\nMSE: " + str(metrics.mean_squared_error(self.y_test,
-                                                                                                      y_predict)) + "\n__________________________________________________________________")
+    def TestModel(self, X_data_Test, Y_data_Test):
+        Y_data_Test = np.atleast_2d(Y_data_Test).T
+        prediction = self.model.predict(np.array(X_data_Test).T)
+        print("Support vector machine Regression Model " + "\nMSE: " + str(metrics.mean_squared_error( Y_data_Test,
+                                                                                                       prediction)) + "\nR2: " + str(metrics.r2_score( Y_data_Test,
+                                                                                                       prediction)) + "\n__________________________________________________________________")

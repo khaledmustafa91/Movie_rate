@@ -17,14 +17,22 @@ import Lasso_Regression as LaR
 import Polynomial_Regression as PR
 import Ridge_Regression as RR
 import PreProcessingFinal as pre
-#import preprocessingBsmsm as pre
 
-preprocessingVar = pre.PrepProcessing()
-tobeTrained , tobeLabel = preprocessingVar.GetData()
+import DecisionTreeClassifier as DTC
+import Knn_Classifier as KNNC
+import Naive_Bayes as NB
+import RandomForestClassifier as RFC
+import SVM as svm
 
 def main():
-    print("If You Want to show our trail Press 1 \nIf You want to Test Press 2 ")
-    ch=input()
+    preprocessingVar = pre.PrepProcessing('tmdb_5000_movies_classification.csv', 'tmdb_5000_credits.csv')
+    preprocessingVar.reformat()
+    preprocessingVar.deleteMissingData()
+    preprocessingVar.meanNormalization()
+    tobeTrained, tobeLabel = preprocessingVar.GetData()
+
+    print("If You Want to show our train Press 1 \nIf You want to Test Press 2 ")
+    ch = input()
     if ch=='1':
         LinearModel = LR.Linear_Regression(tobeTrained, tobeLabel)
         LinearModel.FitModel()
@@ -55,35 +63,43 @@ def main():
         RRModel = RR.Ridge_Regression(tobeTrained, tobeLabel)
         RRModel.FitModel()
         RRModel.TrainModel()
-    else:
-        print("Enter X Data Name : ")
-        xname=input()
-        print("Enter Y Data Name : ")
-        yname=input()
-        XTest=pd.read_csv(xname)
-        YTest = pd.read_csv(yname)
 
-        LinearModel = LR.Linear_Regression(tobeTrained, tobeLabel,XTest,YTest)
+
+
+        DecTree = DTC.DecisionTreeClassifier(tobeTrained,tobeLabel)
+        DecTree.FitModel()
+        DecTree.TrainModel()
+
+    else:
+        preprocessingVar1 = pre.PrepProcessing('tmdb_5000_movies_train.csv', 'tmdb_5000_credits_train.csv')
+        preprocessingVar1.reformat()
+        preprocessingVar1.deleteMissingData()
+        preprocessingVar1.meanNormalization()
+
+        XTest, YTest = preprocessingVar1.GetData()
+        YTest = np.atleast_2d(YTest).T
+
+        LinearModel = LR.Linear_Regression(tobeTrained, tobeLabel, XTest, YTest)
         LinearModel.FitModel()
         LinearModel.TrainAndTestModel()
-
         # svr
+        '''
         Svr = sv.SVR(tobeTrained, tobeLabel)
         Svr.FitModel()
         Svr.TrainAndTestModel()
-
+       '''
         # KNN model
         KnnModel = Knn.Knn_Regression(tobeTrained, tobeLabel, 10,XTest,YTest)
         KnnModel.FitModel()
         KnnModel.TrainModel()
-
+        '''
         # Lasso_Regression
         LassoModel = LaR.Lasso_Regression(tobeTrained, tobeLabel,XTest,YTest)
         LassoModel.FitModel()
         LassoModel.TrainAndTestModel()
-
+       '''
         # Polynomial_Regression
-        PRModel = PR.Polynomial_Regression(tobeTrained, tobeLabel, 3,XTest,YTest)
+        PRModel = PR.Polynomial_Regression(tobeTrained, tobeLabel, 3, XTest, YTest)
         PRModel.FitModel()
         PRModel.TrainAndTestModel()
 
