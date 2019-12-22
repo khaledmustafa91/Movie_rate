@@ -15,7 +15,7 @@ class SVM:
         self.YdataTrain = Y_data_Train
 
     def FitModel(self):
-        self.model=SVC(gamma='auto', C=3)
+        self.model=SVC(gamma='auto', C=1)
         self.model.fit(self.XdataTrain, self.YdataTrain)
 
         self.model1 = OneVsRestClassifier(SVC(gamma='auto', C=3))

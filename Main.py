@@ -23,7 +23,15 @@ import Knn_Classifier as KNNC
 import Naive_Bayes as NB
 import RandomForestClassifier as RFC
 import SVM as svm
+import ClassificationPreprocessing as CPre
 
+import Logistic_Regression as LR
+import Knn_Classifier as knn
+import SVM as svm
+import DecisionTreeClassifier as dt
+import Naive_Bayes as nb
+import RandomForestClassifier as rf
+import AdaBoostClassifier as ad
 def main():
     preprocessingVar = pre.PrepProcessing('tmdb_5000_movies_classification.csv', 'tmdb_5000_credits.csv')
     preprocessingVar.reformat()
@@ -108,6 +116,37 @@ def main():
         RRModel = RR.Ridge_Regression(tobeTrained, tobeLabel,XTest,YTest)
         RRModel.FitModel()
         RRModel.TrainAndTestModel()
+def ClassificationModels():
+    classificationPreprocessingVar = CPre.Preprocessing('tmdb_5000_movies_classification.csv', 'tmdb_5000_credits.csv')
+    classificationPreprocessingVar.reformat()
+    #classificationPreprocessingVar.deleteMissigData()
+    #classificationPreprocessingVar.meanNormalization()
+    X_train, y_train, X_test, y_test = classificationPreprocessingVar.GetData()
 
-main()
+    obj1 = LR.Logistic_Regression(X_train, y_train, X_test, y_test)
+    obj1.FitModel()
+    obj1.TrainAndTestModel()
 
+    obj2 = svm.SVM(X_train, y_train)
+    obj2.FitModel()
+    obj2.TestModel(X_test, y_test)
+
+    obj3 = knn.Knn_Classifier(X_train, y_train, 5)
+    obj3.FitModel()
+    obj3.TestModel(X_test, y_test)
+
+    obj5 = dt.DecisionTreeClassifier(X_train, y_train)
+    obj5.FitModel()
+    obj5.TestModel(X_test, y_test)
+
+    obj6 = rf.RandomForestClassifier(X_train, y_train)
+    obj6.FitModel()
+    obj6.TestModel(X_test, y_test)
+
+    obj7 = ad.AdaBoostClassifier(X_train, y_train)
+    obj7.FitModel()
+    obj7.TestModel(X_test, y_test)
+
+
+#main()
+ClassificationModels()

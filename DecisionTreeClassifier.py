@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifie
 
 
 class DecisionTreeClassifier :
-    model = DecisionTreeClassifier(max_depth=3)
+    model = DecisionTreeClassifier(max_depth=5)
 
 
 

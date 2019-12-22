@@ -12,7 +12,7 @@ from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifie
 class AdaBoostClassifier:
     model  =AdaBoostClassifier(DecisionTreeClassifier(max_depth=1),
                          algorithm="SAMME.R",
-                         n_estimators=600)
+                         n_estimators=800)
 
     def __init__(self, X_data_Train, Y_data_Train):
 

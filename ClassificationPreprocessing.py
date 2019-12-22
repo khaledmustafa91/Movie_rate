@@ -195,7 +195,7 @@ class Preprocessing:
         print( XdataTrain[rowIndex,:])
         return 0
 
-    def test(self):
+    def GetData(self):
         tobeTrained = []
         for i in self.datatest:
             tobeTrained.append(self.x[i])
@@ -217,7 +217,7 @@ class Preprocessing:
         X_trainWithoutPCA = X_train
         X_train, X_test = self.dimensionaltyReduction(5, X_train, X_test)
 
-        obj1 = LR.Logistic_Regression(X_train, y_train, X_test, y_test)
+        '''obj1 = LR.Logistic_Regression(X_train, y_train, X_test, y_test)
         obj1.FitModel()
         obj1.TrainAndTestModel()
 
@@ -225,7 +225,7 @@ class Preprocessing:
         obj2.FitModel()
         obj2.TestModel(X_test, y_test)
 
-        obj3 = knn.Knn_Classifier(X_train, y_train, 3)
+        obj3 = knn.Knn_Classifier(X_train, y_train, 5)
         obj3.FitModel()
         obj3.TestModel(X_test, y_test)
 
@@ -241,11 +241,11 @@ class Preprocessing:
         obj7 = ad.AdaBoostClassifier(X_train, y_train)
         obj7.FitModel()
         obj7.TestModel(X_test, y_test)
-
+        '''
         testaya = [0, 1.929883,  0, 90, 16]
         #testaya = np.reshape(testaya,[-1,1])
         self.fillMissingTestData(X_trainWithoutPCA, testaya)
-
+        return X_train,y_train,X_test,y_test
     def dimensionaltyReduction(self,numberOfPC,dataTrain,dataTest):
         dataTrans = StandardScaler().fit_transform(dataTrain)
         testdataTrans = StandardScaler().fit_transform(dataTest)
@@ -269,7 +269,7 @@ obj.deleteMissigData()
 obj.reformat()
 
 #obj.mapColumn("production_companies")
-obj.test()
+#obj.GetData()
 
 '''import numpy as np
 import pandas as pd
